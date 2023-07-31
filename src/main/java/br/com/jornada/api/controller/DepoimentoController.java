@@ -10,16 +10,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.jornada.api.domain.DepoimentoRepository;
-import br.com.jornada.api.domain.dto.DadosListagemDepoimento;
+import br.com.jornada.api.domain.dto.CadastroDepoimentoDTO;
 import br.com.jornada.api.domain.dto.DepoimentoDTO;
 import br.com.jornada.api.service.DepoimentoService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/depoimentos")
@@ -32,21 +34,21 @@ public class DepoimentoController {
   private DepoimentoService service;
 
   @GetMapping
-  public ResponseEntity<Page<DadosListagemDepoimento>> listar(@PageableDefault(size = 10) Pageable paginacao) {
-    return ResponseEntity.ok(repository.findAllByAtivoTrue(paginacao).map(DadosListagemDepoimento::new));
+  public ResponseEntity<Page<DepoimentoDTO>> listar(@PageableDefault(size = 10) Pageable paginacao) {
+    return ResponseEntity.ok(repository.findAllByAtivoTrue(paginacao).map(DepoimentoDTO::new));
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<DadosListagemDepoimento> detalhar(
+  public ResponseEntity<DepoimentoDTO> detalhar(
       @PathVariable Long id) {
-    DadosListagemDepoimento dados = service.detalhar(id);
+    DepoimentoDTO dados = service.detalhar(id);
     return ResponseEntity.ok(dados);
 
   }
 
   @PostMapping
   @Transactional
-  public ResponseEntity<DepoimentoDTO> cadastrar(@RequestParam("dados") String dados,
+  public ResponseEntity<DepoimentoDTO> cadastrar(@RequestBody @Valid CadastroDepoimentoDTO dados,
       UriComponentsBuilder uriComponentsBuilder) {
 
     DepoimentoDTO depoimento = service.salvar(dados);
@@ -56,7 +58,7 @@ public class DepoimentoController {
 
   @PutMapping
   @Transactional
-  public ResponseEntity<DepoimentoDTO> atualizar(@RequestParam("dados") String dados) {
+  public ResponseEntity<DepoimentoDTO> atualizar(@RequestParam("dados") DepoimentoDTO dados) {
     DepoimentoDTO dtoResposta = service.atualizar(dados);
     return ResponseEntity.ok(dtoResposta);
   }

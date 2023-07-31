@@ -1,7 +1,14 @@
 package br.com.jornada.api.repository;
 
-import jakarta.persistence.EntityManager;
-import jakarta.validation.ConstraintViolationException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.equalTo;
+
+import java.util.List;
+
+import javax.sql.DataSource;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,15 +18,8 @@ import org.springframework.test.context.ActiveProfiles;
 
 import br.com.jornada.api.domain.Depoimento;
 import br.com.jornada.api.domain.DepoimentoRepository;
-
-import javax.sql.DataSource;
-
-import java.util.List;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.contains;
+import jakarta.persistence.EntityManager;
+import jakarta.validation.ConstraintViolationException;
 
 @ActiveProfiles("test")
 @DataJpaTest

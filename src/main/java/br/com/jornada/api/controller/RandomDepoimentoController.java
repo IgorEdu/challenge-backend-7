@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.jornada.api.domain.dto.DadosListagemDepoimento;
+import br.com.jornada.api.domain.dto.DepoimentoDTO;
 import br.com.jornada.api.service.DepoimentoService;
 
 @RestController
@@ -19,9 +19,9 @@ public class RandomDepoimentoController {
   private DepoimentoService service;
 
   @GetMapping
-  public ResponseEntity<List<DadosListagemDepoimento>> listar() {
+  public ResponseEntity<List<DepoimentoDTO>> listar() {
 
-    List<DadosListagemDepoimento> depoimentosHome = service.listarTresDepoimentosAleatorios();
+    List<DepoimentoDTO> depoimentosHome = service.listarTresDepoimentosAleatorios();
     return ResponseEntity.ok(depoimentosHome);
   }
 }

@@ -3,15 +3,12 @@ package br.com.jornada.api.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.jornada.api.domain.Depoimento;
 import br.com.jornada.api.domain.DepoimentoRepository;
-import br.com.jornada.api.domain.dto.DadosListagemDepoimento;
+import br.com.jornada.api.domain.dto.CadastroDepoimentoDTO;
 import br.com.jornada.api.domain.dto.DepoimentoDTO;
 
 @Service
@@ -20,59 +17,41 @@ public class DepoimentoService {
   @Autowired
   private DepoimentoRepository repository;
 
-  @Autowired
-  private ObjectMapper objectMapper;
-
-  public DepoimentoDTO salvar(String dados) {
-    DepoimentoDTO depoimento;
-    try {
-      depoimento = objectMapper.readValue(dados, DepoimentoDTO.class);
-
-      Depoimento dadosSalvo = repository.save(new Depoimento(depoimento));
-      return new DepoimentoDTO(dadosSalvo);
-    } catch (JsonMappingException e) {
-      e.printStackTrace();
-    } catch (JsonProcessingException e) {
-      e.printStackTrace();
-    } catch (IllegalStateException e) {
-      e.printStackTrace();
-    }
-    return null;
+  public DepoimentoDTO salvar(CadastroDepoimentoDTO dados) {
+    Depoimento depoimento = dados.toModel();
+    Depoimento depoimentoSalvo = repository.save(depoimento);
+    return new DepoimentoDTO(depoimentoSalvo);
   }
 
-  public DadosListagemDepoimento detalhar(Long id) {
+  public DepoimentoDTO detalhar(Long id) {
     Depoimento depoimento = repository.getReferenceById(id);
-    return new DadosListagemDepoimento(depoimento);
+    return new DepoimentoDTO(depoimento);
+  }
+
+  public List<DepoimentoDTO> listar(DepoimentoDTO paramPesquisa) {
+    Depoimento depoimento = paramPesquisa.toModel();
+    Example<Depoimento> exemplo = Example.of(depoimento);
+    List<Depoimento> depoimentos = repository.findAll(exemplo);
+    return depoimentos.stream().map(
+        DepoimentoDTO::new).toList();
+  }
+
+  public List<DepoimentoDTO> listarTresDepoimentosAleatorios() {
+    List<Depoimento> depoimentos = repository.encontrarTresDepoimentosAleatoriamente();
+    return depoimentos.stream().map(
+        DepoimentoDTO::new).toList();
   }
 
   public void excluir(Long id) {
     this.repository.deleteById(id);
   }
 
-  public List<DadosListagemDepoimento> listarTresDepoimentosAleatorios() {
-    List<Depoimento> depoimentos = repository.encontrarTresDepoimentosAleatoriamente();
-    return depoimentos.stream().map(
-        DadosListagemDepoimento::new).toList();
-  }
-
-  public DepoimentoDTO atualizar(String dados) {
-    DepoimentoDTO depoimento;
-    try {
-      depoimento = objectMapper.readValue(dados, DepoimentoDTO.class);
-      Depoimento depoimentoAAtualizar = repository.getReferenceById(depoimento.id());
-
-      depoimentoAAtualizar.atualizarInformacoes(depoimento);
-      repository.save(depoimentoAAtualizar);
-      return new DepoimentoDTO(depoimentoAAtualizar);
-    } catch (JsonMappingException e) {
-      e.printStackTrace();
-    } catch (JsonProcessingException e) {
-      e.printStackTrace();
-    } catch (IllegalStateException e) {
-      e.printStackTrace();
-    }
-
-    return null;
+  public DepoimentoDTO atualizar(DepoimentoDTO dados) {
+    Depoimento depoimentoAAtualizar = repository.getReferenceById(dados.id());
+    depoimentoAAtualizar.setDepoimento(dados.depoimento());
+    depoimentoAAtualizar.setNomeImagem(dados.nomeImagem());
+    repository.save(depoimentoAAtualizar);
+    return new DepoimentoDTO(depoimentoAAtualizar);
   }
 
 }
