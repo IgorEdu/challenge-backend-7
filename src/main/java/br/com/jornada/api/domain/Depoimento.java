@@ -48,22 +48,22 @@ public class Depoimento {
   @Column(name = "updated_at")
   private Date lastUpdatedOn;
 
-  public Depoimento(DepoimentoDTO dados, String imagem) {
+  public Depoimento(DepoimentoDTO dados) {
     this.ativo = true;
     this.nome = dados.nome();
     this.depoimento = dados.depoimento();
-    this.nomeImagem = imagem;
+    this.nomeImagem = dados.nomeImagem();
   }
 
-  public void atualizarInformacoes(DepoimentoDTO dados, String imagem) {
+  public void atualizarInformacoes(DepoimentoDTO dados) {
     if (dados.nome() != null) {
       this.nome = dados.nome();
     }
     if (dados.depoimento() != null) {
       this.depoimento = dados.depoimento();
     }
-    if (imagem != null) {
-      this.nomeImagem = imagem;
+    if (dados.nomeImagem() != null) {
+      this.nomeImagem = dados.nomeImagem();
     }
   }
 

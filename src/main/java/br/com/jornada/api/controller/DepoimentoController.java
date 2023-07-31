@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.jornada.api.domain.DepoimentoRepository;
@@ -48,18 +47,17 @@ public class DepoimentoController {
   @PostMapping
   @Transactional
   public ResponseEntity<DepoimentoDTO> cadastrar(@RequestParam("dados") String dados,
-      @RequestParam("file") MultipartFile arquivo, UriComponentsBuilder uriComponentsBuilder) {
+      UriComponentsBuilder uriComponentsBuilder) {
 
-    DepoimentoDTO depoimento = service.salvar(dados, arquivo);
+    DepoimentoDTO depoimento = service.salvar(dados);
     var uri = uriComponentsBuilder.path("/depoimentos/{id}").buildAndExpand(depoimento.id()).toUri();
     return ResponseEntity.created(uri).body(depoimento);
   }
 
   @PutMapping
   @Transactional
-  public ResponseEntity<DepoimentoDTO> atualizar(@RequestParam("dados") String dados,
-      @RequestParam("file") MultipartFile arquivo) {
-    DepoimentoDTO dtoResposta = service.atualizar(dados, arquivo);
+  public ResponseEntity<DepoimentoDTO> atualizar(@RequestParam("dados") String dados) {
+    DepoimentoDTO dtoResposta = service.atualizar(dados);
     return ResponseEntity.ok(dtoResposta);
   }
 

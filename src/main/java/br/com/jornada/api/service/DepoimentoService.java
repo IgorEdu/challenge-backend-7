@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -13,8 +11,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.jornada.api.domain.Depoimento;
 import br.com.jornada.api.domain.DepoimentoRepository;
-import br.com.jornada.api.domain.dto.DepoimentoDTO;
 import br.com.jornada.api.domain.dto.DadosListagemDepoimento;
+import br.com.jornada.api.domain.dto.DepoimentoDTO;
 
 @Service
 public class DepoimentoService {
@@ -23,19 +21,14 @@ public class DepoimentoService {
   private DepoimentoRepository repository;
 
   @Autowired
-  private FileStorageService fileStorageService;
-
-  @Autowired
   private ObjectMapper objectMapper;
 
-  public DepoimentoDTO salvar(String dados, MultipartFile arquivo) {
+  public DepoimentoDTO salvar(String dados) {
     DepoimentoDTO depoimento;
     try {
       depoimento = objectMapper.readValue(dados, DepoimentoDTO.class);
-      String fileName = fileStorageService.storeFile(arquivo, depoimento.nome());
-      ServletUriComponentsBuilder.fromCurrentContextPath().path(fileName).toUriString();
 
-      Depoimento dadosSalvo = repository.save(new Depoimento(depoimento, fileName));
+      Depoimento dadosSalvo = repository.save(new Depoimento(depoimento));
       return new DepoimentoDTO(dadosSalvo);
     } catch (JsonMappingException e) {
       e.printStackTrace();
@@ -62,15 +55,13 @@ public class DepoimentoService {
         DadosListagemDepoimento::new).toList();
   }
 
-  public DepoimentoDTO atualizar(String dados, MultipartFile arquivo) {
+  public DepoimentoDTO atualizar(String dados) {
     DepoimentoDTO depoimento;
     try {
       depoimento = objectMapper.readValue(dados, DepoimentoDTO.class);
-      String fileName = fileStorageService.storeFile(arquivo, depoimento.nome());
-      ServletUriComponentsBuilder.fromCurrentContextPath().path(fileName).toUriString();
       Depoimento depoimentoAAtualizar = repository.getReferenceById(depoimento.id());
 
-      depoimentoAAtualizar.atualizarInformacoes(depoimento, fileName);
+      depoimentoAAtualizar.atualizarInformacoes(depoimento);
       repository.save(depoimentoAAtualizar);
       return new DepoimentoDTO(depoimentoAAtualizar);
     } catch (JsonMappingException e) {

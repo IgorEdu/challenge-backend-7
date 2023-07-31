@@ -10,7 +10,7 @@ public record DepoimentoDTO(
 
     @NotBlank String depoimento,
 
-    String nomeImagem) {
+    @NotBlank String nomeImagem) {
 
   public DepoimentoDTO(Depoimento dadosSalvo) {
     this(dadosSalvo.getId(), dadosSalvo.getNome(), dadosSalvo.getDepoimento(), dadosSalvo.getNomeImagem());

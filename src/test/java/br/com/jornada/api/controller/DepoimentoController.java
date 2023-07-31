@@ -43,18 +43,18 @@ public class DepoimentoController {
                 new Depoimento(
                             "Meu nome",
                             "Meu depoimento",
-                            "https://www.minhaimagem.com"
+                            "teste.jpg"
                     )
             );
     
             // Act
             this.mockMvc.perform(
-                    post( "/depoimentos")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(
-                                    "{\"depoente\": \"Meu nome\", " +
-                                            "\"depoimento\": \"Meu depoimento\"," +
-                                            " \"url_foto\": \"https://www.minhaimagem.com\"}" )
+                post( "/depoimentos")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                        "{\"depoente\": \"Meu nome\", " +
+                        "\"depoimento\": \"Meu depoimento\"," +
+                        " \"url_foto\": \"https://www.minhaimagem.com\"}" )
             )
                     // Assert
                     .andExpect(status().isCreated())
