@@ -5,6 +5,7 @@ import java.util.Date;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import br.com.jornada.api.domain.dto.CadastroDepoimentoDTO;
 import br.com.jornada.api.domain.dto.DepoimentoDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,6 +13,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -29,13 +31,19 @@ public class Depoimento {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-  @Setter
+
+  @Column(nullable = false)
+  @Size(min = 1, max = 120, message = "campo 'nome' deve ter de 1 a 120 caracteres")
   private String nome;
+
+  @Column(nullable = false)
   @Setter
+  @Size(min = 1, max = 500, message = "campo 'depoimento' deve ter de 1 a 500 caracteres")
   private String depoimento;
 
-  @Column(name = "nome_imagem")
+  @Column(name = "nome_imagem", nullable = true)
   @Setter
+  @Size(min = 1, max = 255, message = "campo 'nome_imagem' deve ter de 1 a 255 caracteres")
   private String nomeImagem;
 
   private Boolean ativo;
@@ -48,11 +56,11 @@ public class Depoimento {
   @Column(name = "updated_at")
   private Date lastUpdatedOn;
 
-  public Depoimento(DepoimentoDTO dados) {
+  public Depoimento(CadastroDepoimentoDTO cadastroDepoimentoDTO) {
     this.ativo = true;
-    this.nome = dados.nome();
-    this.depoimento = dados.depoimento();
-    this.nomeImagem = dados.nomeImagem();
+    this.nome = cadastroDepoimentoDTO.nome();
+    this.depoimento = cadastroDepoimentoDTO.depoimento();
+    this.nomeImagem = cadastroDepoimentoDTO.nomeImagem();
   }
 
   public void atualizarInformacoes(DepoimentoDTO dados) {
